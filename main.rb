@@ -11,23 +11,27 @@ class Main
     puts '4. List all genres'
     puts '5. List all labels'
     puts '6. List all authors'
-    puts '7. List all sources'
-    puts '8. Add a book'
-    puts '9. Add a music album'
-    puts '10. Add a movie'
-    puts '11. Quit'
+    puts '7. Add a book'
+    puts '8. Add a music album'
+    puts '9. Add a game'
+    puts '10. Quit'
   end
 
   def start
     new_app = App.new
+    new_app.load_books_from_json
+    new_app.load_labels_from_json
     loop do
       show_options
       option = gets.chomp
-      break if option == '11'
+      break if option == '10'
 
-      new_app.list_options(option)
-      new_app.add_options(option)
+      new_app.select_options(option)
+      new_app.select_options_extra(option)
     end
+    new_app.save_books_to_json
+    new_app.save_labels_to_json
+    puts 'You have exited the catalog of things'
   end
 end
 
