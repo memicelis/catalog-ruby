@@ -99,6 +99,7 @@ class App
   def list_all_authors
     @library_lister.list_all_authors(@authors)
   end
+
   def save_data_to_json
     @library_manager.save_books_to_json(@books)
     @library_manager.save_labels_to_json(@labels)
@@ -112,5 +113,4 @@ class App
     @labels = @library_manager.load_labels_from_json
     @books = @library_manager.load_books_from_json
   end
-  
 end
