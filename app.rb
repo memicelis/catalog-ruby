@@ -1,12 +1,20 @@
 require_relative 'book'
 require_relative 'label'
 require_relative 'item'
+require_relative 'author'
+require_relative 'game'
+require_relative 'library_lister'
+require_relative 'library_manager'
 require 'json'
 
 class App
   def initialize
     @books = []
     @labels = []
+    @games = []
+    @authors = []
+    @library_lister = LibraryLister.new
+    @library_manager = LibraryManager.new
   end
 
   def select_options(option)
@@ -56,82 +64,53 @@ class App
     puts 'Book succesfully added'
   end
 
+  def add_game
+    puts 'Add first name'
+    first_name = gets.chomp
+    puts 'Add last name'
+    last_name = gets.chomp
+    puts 'Add publish date(dd/mm/yyyy)'
+    publish_date = gets.chomp
+    puts 'Multiplayer (state the number)'
+    multiplayer = gets.chomp
+    puts 'Last played at (dd/mm/yyyy)'
+    last_played_at = gets.chomp
+
+    game = Game.new(publish_date, multiplayer, last_played_at)
+    @games << game
+    author = Author.new(first_name, last_name)
+    @authors << author
+    game.add_author(author)
+    puts 'Game succesfully added'
+  end
+
   def list_all_books
-    if @books.empty?
-      puts 'No books in the library'
-    else
-      @books.each do |book|
-        book.label
-        puts "Publish date: #{book.publish_date}, Publisher: #{book.publisher}, Cover state: #{book.cover_state}"
-      end
-    end
+    @library_lister.list_all_books(@books)
   end
 
   def list_all_labels
-    if @labels.empty?
-      puts 'No labels in the library'
-    else
-      @labels.each do |label|
-        puts "Title: #{label.title}, Color: #{label.color}"
-      end
-    end
+    @library_lister.list_all_labels(@labels)
   end
 
-  def save_books_to_json
-    books_array = []
-    @books.each do |book|
-      book_obj = {
-        publish_date: book.publish_date,
-        publisher: book.publisher,
-        cover_state: book.cover_state
-      }
-      books_array << book_obj
-    end
-
-    return if books_array.empty?
-
-    File.write('./store/books.json', JSON.pretty_generate(books_array))
+  def list_all_games
+    @library_lister.list_all_games(@games)
   end
 
-  def save_labels_to_json
-    labels_array = []
-    @labels.each do |label|
-      label_obj = {
-        title: label.title,
-        color: label.color
-      }
-      labels_array << label_obj
-    end
-    return if labels_array.empty?
-
-    File.write('./store/labels.json', JSON.pretty_generate(labels_array))
+  def list_all_authors
+    @library_lister.list_all_authors(@authors)
+  end
+  def save_data_to_json
+    @library_manager.save_books_to_json(@books)
+    @library_manager.save_labels_to_json(@labels)
+    @library_manager.save_games_to_json(@games)
+    @library_manager.save_authors_to_json(@authors)
   end
 
-  def load_labels_from_json
-    @labels = []
-    return @labels unless File.exist?('./store/labels.json')
-
-    file = File.open('./store/labels.json')
-    data = JSON.parse(file.read)
-
-    data.each do |label|
-      @labels << Label.new(label['title'], label['color'])
-    end
-    file.close
-    @labels
+  def load_data_from_json
+    @games = @library_manager.load_games_from_json
+    @authors = @library_manager.load_authors_from_json
+    @labels = @library_manager.load_labels_from_json
+    @books = @library_manager.load_books_from_json
   end
-
-  def load_books_from_json
-    @books = []
-    return @books unless File.exist?('./store/books.json')
-
-    file = File.open('./store/books.json')
-    data = JSON.parse(file.read)
-
-    data.each do |book|
-      @books << Book.new(book['publish_date'], book['publisher'], book['cover_state'])
-    end
-    file.close
-    @books
-  end
+  
 end
