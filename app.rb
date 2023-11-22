@@ -8,6 +8,7 @@ class App
     @books = []
     @labels = []
   end
+
   def select_options(option)
     case option
     when '1'
@@ -60,7 +61,7 @@ class App
       puts 'No books in the library'
     else
       @books.each do |book|
-        label = book.label
+        book.label
         puts "Publish date: #{book.publish_date}, Publisher: #{book.publisher}, Cover state: #{book.cover_state}"
       end
     end
@@ -89,7 +90,7 @@ class App
 
     return if books_array.empty?
 
-    File.write(('./store/books.json'), JSON.pretty_generate(books_array))
+    File.write('./store/books.json', JSON.pretty_generate(books_array))
   end
 
   def save_labels_to_json
@@ -99,11 +100,11 @@ class App
         title: label.title,
         color: label.color
       }
-      labels_array <<label_obj
+      labels_array << label_obj
     end
     return if labels_array.empty?
 
-    File.write(('./store/labels.json'), JSON.pretty_generate(labels_array))
+    File.write('./store/labels.json', JSON.pretty_generate(labels_array))
   end
 
   def load_labels_from_json
@@ -114,7 +115,7 @@ class App
     data = JSON.parse(file.read)
 
     data.each do |label|
-      @labels << Label.new(label['title'],label['color'])
+      @labels << Label.new(label['title'], label['color'])
     end
     file.close
     @labels
@@ -126,12 +127,11 @@ class App
 
     file = File.open('./store/books.json')
     data = JSON.parse(file.read)
-    
+
     data.each do |book|
-      @books << Book.new(book['publish_date'], book['publisher'],book['cover_state'])
+      @books << Book.new(book['publish_date'], book['publisher'], book['cover_state'])
     end
     file.close
     @books
   end
-
 end
