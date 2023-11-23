@@ -3,6 +3,8 @@ require_relative 'label'
 require_relative 'item'
 require_relative 'author'
 require_relative 'game'
+require_relative 'music_album'
+require_relative 'genre'
 require_relative 'library_lister'
 require_relative 'library_manager'
 require 'json'
@@ -13,6 +15,8 @@ class App
     @labels = []
     @games = []
     @authors = []
+    @genres = []
+    @albums = []
     @library_lister = LibraryLister.new
     @library_manager = LibraryManager.new
   end
@@ -84,6 +88,23 @@ class App
     puts 'Game succesfully added'
   end
 
+  def add_music_album
+    print 'Add publish date(dd/mm/yyyy)'
+    publish_date = gets.chomp
+    print 'On spotify (true,false): '
+    on_spotify = gets.chomp.downcase
+    music_album = MusicAlbum.new(publish_date, on_spotify)
+    @albums << music_album
+    puts 'Album created successfully'
+
+    puts 'Add genre (Comedy, Horror): '
+    name = gets.chomp
+    genre = Genre.new(name)
+    @genres << genre
+    music_album.add_genre(genre)
+    puts "#{name} genre created successfully"
+  end
+
   def list_all_books
     @library_lister.list_all_books(@books)
   end
@@ -100,11 +121,21 @@ class App
     @library_lister.list_all_authors(@authors)
   end
 
+  def list_all_music_albums
+    @library_lister.list_all_music_albums(@albums)
+  end
+
+  def list_all_genres
+    @library_lister.list_all_genres(@genres)
+  end
+
   def save_data_to_json
     @library_manager.save_books_to_json(@books)
     @library_manager.save_labels_to_json(@labels)
     @library_manager.save_games_to_json(@games)
     @library_manager.save_authors_to_json(@authors)
+    @library_manager.save_music_albums_to_json(@albums)
+    @library_manager.save_genres_to_json(@genres)
   end
 
   def load_data_from_json
@@ -112,5 +143,7 @@ class App
     @authors = @library_manager.load_authors_from_json
     @labels = @library_manager.load_labels_from_json
     @books = @library_manager.load_books_from_json
+    @albums = @library_manager.load_music_albums_from_json
+    @genres = @library_manager.load_genres_from_json
   end
 end

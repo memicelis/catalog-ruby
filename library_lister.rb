@@ -42,4 +42,26 @@ class LibraryLister
       end
     end
   end
+
+  def list_all_music_albums(music_albums)
+    if music_albums.empty?
+      puts 'No music albums in the library'
+    else
+      music_albums.each do |album|
+        album.author
+        puts "Publish date: #{album.publish_date}, " \
+             "On spotify: #{album.on_spotify}"
+      end
+    end
+  end
+
+  def list_all_genres(genres)
+    if genres.empty?
+      puts 'No genres in the library'
+    else
+      genres.each do |genre|
+        puts "Name: #{genre.name}"
+      end
+    end
+  end
 end
