@@ -19,8 +19,7 @@ class Main
 
   def start
     new_app = App.new
-    new_app.load_books_from_json
-    new_app.load_labels_from_json
+    new_app.load_data_from_json
     loop do
       show_options
       option = gets.chomp
@@ -29,8 +28,7 @@ class Main
       new_app.select_options(option)
       new_app.select_options_extra(option)
     end
-    new_app.save_books_to_json
-    new_app.save_labels_to_json
+    new_app.save_data_to_json
     puts 'You have exited the catalog of things'
   end
 end
