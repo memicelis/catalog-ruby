@@ -118,4 +118,62 @@ class LibraryManager
     file.close
     books
   end
+
+  def save_music_albums_to_json(music_albums)
+    music_albums_array = []
+    music_albums.each do |music_album|
+      music_album_obj = {
+        publish_date: music_album.publish_date,
+        on_spotify: music_album.on_spotify
+      }
+      music_albums_array << music_album_obj
+    end
+
+    return if music_albums_array.empty?
+
+    File.write('./store/music_albums.json', JSON.pretty_generate(music_albums_array))
+  end
+
+  def load_music_albums_from_json
+    music_albums = []
+    return music_albums unless File.exist?('./store/music_albums.json')
+
+    file = File.open('./store/music_albums.json')
+    data = JSON.parse(file.read)
+
+    data.each do |music_album|
+      music_albums << MusicAlbum.new(music_album['publish_date'], music_album['on_spotify'])
+    end
+    file.close
+    music_albums
+  end
+
+  def save_genres_to_json(genres)
+    genres_array = []
+    genres.each do |genre|
+      genre_obj = {
+        name: genre.name,
+        items: genre.items.map(&:to_json)
+      }
+      genres_array << genre_obj
+    end
+
+    return if genres_array.empty?
+
+    File.write('./store/genres.json', JSON.pretty_generate(genres_array))
+  end
+
+  def load_genres_from_json
+    genres = []
+    return genres unless File.exist?('./store/genres.json')
+
+    file = File.open('./store/genres.json')
+    data = JSON.parse(file.read)
+
+    data.each do |genre|
+      genres << Genre.new(genre['name'])
+    end
+    file.close
+    genres
+  end
 end
